@@ -1,0 +1,487 @@
+<html><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script><script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Inter', 'sans-serif']
+            }
+          }
+        }
+      };
+    </script>
+    <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <style>
+        ::-webkit-scrollbar { display: none;}
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .card-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-8px); }
+        .glass-effect { backdrop-filter: blur(20px); background: rgba(255, 255, 255, 0.95); }
+        .text-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .shadow-luxury { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        .btn-premium { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%); }
+    </style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&amp;display=swap"><style>
+  .highlighted-section {
+    outline: 2px solid #3F20FB;
+    background-color: rgba(63, 32, 251, 0.1);
+  }
+
+  .edit-button {
+    position: absolute;
+    z-index: 1000;
+  }
+
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  html, body {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  </style></head>
+  <script>
+async function loadPosts(page = 1, perPage = 6){
+  try{
+    const res = await fetch(`/api/posts?page=${page}&perPage=${perPage}`);
+    const json = await res.json();
+    const container = document.getElementById('blog-grid');
+
+    container.innerHTML = '';
+
+    if (!json.data || json.data.length === 0){
+      container.innerHTML = '<p class="text-center text-slate-500">No hay posts aún.</p>';
+      return;
+    }
+
+    json.data.forEach(p => {
+      const item = document.createElement('article');
+      item.className = 'bg-white rounded-2xl shadow-luxury overflow-hidden card-hover group';
+      item.innerHTML = `
+        <div class="relative overflow-hidden">
+          <img class="w-full h-56 object-cover" src="${p.image ?? '/uploads/default.png'}" alt="${escapeHtml(p.title)}">
+          <div class="absolute top-4 left-4">
+            <span class="bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+              ${escapeHtml(p.category_name ?? '')}
+            </span>
+          </div>
+        </div>
+        <div class="p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-4 group-hover:text-purple-600 transition-colors">
+            ${escapeHtml(p.title)}
+          </h3>
+          <p class="text-slate-600 mb-6 leading-relaxed">${escapeHtml(p.summary)}</p>
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div class="flex items-center space-x-3">
+              <img src="/assets/default-avatar.png" class="w-8 h-8 rounded-full" alt="avatar">
+              <div>
+                <span class="text-sm font-semibold text-slate-900">${escapeHtml(p.author || 'Admin')}</span>
+                <p class="text-xs text-slate-500">${formatDate(p.created_at)}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(item);
+    });
+  }catch(err){
+    console.error("Error cargando posts:", err);
+  }
+}
+
+function escapeHtml(str){
+  if(!str) return '';
+  return str.replace(/[&<>"']/g, function(tag){
+    const chars = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+    return chars[tag] || tag;
+  });
+}
+
+function formatDate(dateString){
+  const d = new Date(dateString);
+  return d.toLocaleDateString('es-MX',{year:'numeric',month:'short',day:'numeric'});
+}
+
+// Llamar al cargar la página
+document.addEventListener('DOMContentLoaded', () => loadPosts());
+</script>
+
+<body class="bg-slate-50">
+<script>
+async function loadPosts(page = 1, perPage = 6){
+  try{
+    const res = await fetch(`/api/posts?page=${page}&perPage=${perPage}`);
+    const json = await res.json();
+    const container = document.getElementById('blog-grid');
+
+    container.innerHTML = '';
+
+    if (!json.data || json.data.length === 0){
+      container.innerHTML = '<p class="text-center text-slate-500">No hay posts aún.</p>';
+      return;
+    }
+
+    json.data.forEach(p => {
+      const item = document.createElement('article');
+      item.className = 'bg-white rounded-2xl shadow-luxury overflow-hidden card-hover group';
+      item.innerHTML = `
+        <div class="relative overflow-hidden">
+          <img class="w-full h-56 object-cover" src="${p.image ?? '/uploads/default.png'}" alt="${escapeHtml(p.title)}">
+          <div class="absolute top-4 left-4">
+            <span class="bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+              ${escapeHtml(p.category_name ?? '')}
+            </span>
+          </div>
+        </div>
+        <div class="p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-4 group-hover:text-purple-600 transition-colors">
+            ${escapeHtml(p.title)}
+          </h3>
+          <p class="text-slate-600 mb-6 leading-relaxed">${escapeHtml(p.summary)}</p>
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div class="flex items-center space-x-3">
+              <img src="/assets/default-avatar.png" class="w-8 h-8 rounded-full" alt="avatar">
+              <div>
+                <span class="text-sm font-semibold text-slate-900">${escapeHtml(p.author || 'Admin')}</span>
+                <p class="text-xs text-slate-500">${formatDate(p.created_at)}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+      container.appendChild(item);
+    });
+  }catch(err){
+    console.error("Error cargando posts:", err);
+  }
+}
+
+function escapeHtml(str){
+  if(!str) return '';
+  return str.replace(/[&<>"']/g, function(tag){
+    const chars = {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'};
+    return chars[tag] || tag;
+  });
+}
+
+function formatDate(dateString){
+  const d = new Date(dateString);
+  return d.toLocaleDateString('es-MX',{year:'numeric',month:'short',day:'numeric'});
+}
+
+// Llamar al cargar la página
+document.addEventListener('DOMContentLoaded', () => loadPosts());
+</script>
+
+<nav id="top-nav" class="gradient-bg text-white px-6 py-4 shadow-lg">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="flex items-center space-x-6">
+      <button class="text-white hover:text-purple-200 transition-colors">
+        <i class="fa-solid fa-bars text-lg"></i>
+      </button>
+      <div class="flex items-center space-x-3">
+        <i class="fa-solid fa-sparkles text-yellow-300"></i>
+        <span class="font-medium">Fall Promo | Save up to $1200/year</span>
+      </div>
+    </div>
+    <button class="btn-premium text-white px-6 py-2 rounded-full text-sm font-semibold hover:shadow-lg transition-all transform hover:scale-105">
+      View Offer
+    </button>
+  </div>
+</nav>
+
+<header id="header" class="glass-effect border-b border-white/20 px-6 py-5 shadow-sm sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <div class="flex items-center space-x-8">
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center text-white shadow-lg">
+          <span class="text-xl font-bold">B</span>
+        </div>
+        <span class="text-2xl font-bold text-gradient">BlogSpace</span>
+      </div>
+      <nav class="text-slate-600 flex items-center space-x-2 text-sm font-medium">
+        <span class="hover:text-slate-900 transition-colors cursor-pointer">Home</span>
+        <i class="fa-solid fa-chevron-right text-xs text-slate-400"></i>
+        <span class="text-slate-900 font-semibold">Blog</span>
+      </nav>
+    </div>
+    <div class="flex items-center space-x-4">
+      <button class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-xl flex items-center justify-center transition-colors group">
+        <i class="fa-solid fa-search text-slate-600 group-hover:text-slate-800"></i>
+      </button>
+      <button class="w-10 h-10 bg-slate-100 hover:bg-slate-200 rounded-xl flex items-center justify-center transition-colors group relative">
+        <i class="fa-solid fa-bell text-slate-600 group-hover:text-slate-800"></i>
+        <span class="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></span>
+      </button>
+      <div class="flex items-center space-x-3 pl-4 border-l border-slate-200">
+        <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-2.jpg" alt="User Avatar" class="w-10 h-10 rounded-xl object-cover ring-2 ring-purple-100">
+        <span class="font-semibold text-slate-800">John Doe</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main-content" class="bg-gradient-to-br from-slate-50 via-white to-purple-50">
+  <div class="max-w-7xl mx-auto px-6 py-16">
+    <div id="hero-section" class="text-center mb-20">
+      <div class="inline-flex items-center space-x-2 bg-purple-100 text-purple-800 px-4 py-2 rounded-full text-sm font-medium mb-8">
+        <i class="fa-solid fa-newspaper"></i>
+        <span>Latest Insights</span>
+      </div>
+      <h1 class="text-6xl font-bold text-slate-900 mb-8 leading-tight">
+        Our <span class="text-gradient">Blog</span>
+      </h1>
+      <p class="text-xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-light">
+        Discover insights, tips, and stories from our team. Stay updated with the latest trends in technology, design, and innovation that shape the digital world.
+      </p>
+    </div>
+
+    <div id="blog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mb-20">
+      <article class="bg-white rounded-2xl shadow-luxury overflow-hidden card-hover group">
+        <div class="relative overflow-hidden">
+          <img class="w-full h-56 object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/2da2d726b9-18cfc1f01281a12bc093.png" alt="futuristic web development workspace with AI coding assistant and holographic interfaces">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute top-4 left-4">
+            <span class="bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-semibold">Technology</span>
+          </div>
+        </div>
+        <div class="p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-4 group-hover:text-purple-600 transition-colors">The Future of Web Development</h3>
+          <p class="text-slate-600 mb-6 leading-relaxed">
+            Explore the emerging trends and technologies that are shaping the future of web development, from AI integration to progressive web apps.
+          </p>
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div class="flex items-center space-x-3">
+              <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-3.jpg" alt="Author" class="w-8 h-8 rounded-full">
+              <div>
+                <span class="text-sm font-semibold text-slate-900">Sarah Chen</span>
+                <p class="text-xs text-slate-500">March 15, 2025</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4 text-sm text-slate-500">
+              <span class="flex items-center space-x-1">
+                <i class="fa-solid fa-clock"></i>
+                <span>5 min read</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="bg-white rounded-2xl shadow-luxury overflow-hidden card-hover group">
+        <div class="relative overflow-hidden">
+          <img class="w-full h-56 object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/b2b51fa3f8-aeaee14d6fa1dc2ae058.png" alt="modern design system components and UI elements arranged aesthetically">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute top-4 left-4">
+            <span class="bg-emerald-600 text-white px-3 py-1 rounded-full text-xs font-semibold">Design</span>
+          </div>
+        </div>
+        <div class="p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-4 group-hover:text-purple-600 transition-colors">Design Systems That Scale</h3>
+          <p class="text-slate-600 mb-6 leading-relaxed">
+            Learn how to build and maintain design systems that grow with your product and team, ensuring consistency across all touchpoints.
+          </p>
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div class="flex items-center space-x-3">
+              <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-5.jpg" alt="Author" class="w-8 h-8 rounded-full">
+              <div>
+                <span class="text-sm font-semibold text-slate-900">Emma Wilson</span>
+                <p class="text-xs text-slate-500">March 12, 2025</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4 text-sm text-slate-500">
+              <span class="flex items-center space-x-1">
+                <i class="fa-solid fa-clock"></i>
+                <span>7 min read</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="bg-white rounded-2xl shadow-luxury overflow-hidden card-hover group">
+        <div class="relative overflow-hidden">
+          <img class="w-full h-56 object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/1accc2debd-8dd5499edb9fa015ef92.png" alt="user experience research session with personas and journey maps">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute top-4 left-4">
+            <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">UX</span>
+          </div>
+        </div>
+        <div class="p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-4 group-hover:text-purple-600 transition-colors">User Experience Best Practices</h3>
+          <p class="text-slate-600 mb-6 leading-relaxed">
+            Discover proven UX strategies that improve user satisfaction and drive business results through thoughtful design decisions.
+          </p>
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div class="flex items-center space-x-3">
+              <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-4.jpg" alt="Author" class="w-8 h-8 rounded-full">
+              <div>
+                <span class="text-sm font-semibold text-slate-900">Alex Rodriguez</span>
+                <p class="text-xs text-slate-500">March 10, 2025</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4 text-sm text-slate-500">
+              <span class="flex items-center space-x-1">
+                <i class="fa-solid fa-clock"></i>
+                <span>6 min read</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="bg-white rounded-2xl shadow-luxury overflow-hidden card-hover group">
+        <div class="relative overflow-hidden">
+          <img class="w-full h-56 object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/59f2acbe4a-7bd2fa980fd1e1fbc385.png" alt="mobile-first responsive design mockups on various devices">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute top-4 left-4">
+            <span class="bg-orange-600 text-white px-3 py-1 rounded-full text-xs font-semibold">Mobile</span>
+          </div>
+        </div>
+        <div class="p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-4 group-hover:text-purple-600 transition-colors">Mobile-First Development</h3>
+          <p class="text-slate-600 mb-6 leading-relaxed">
+            Understanding the importance of mobile-first approach in modern web development and how it impacts user engagement.
+          </p>
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div class="flex items-center space-x-3">
+              <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-8.jpg" alt="Author" class="w-8 h-8 rounded-full">
+              <div>
+                <span class="text-sm font-semibold text-slate-900">Michael Kim</span>
+                <p class="text-xs text-slate-500">March 8, 2025</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4 text-sm text-slate-500">
+              <span class="flex items-center space-x-1">
+                <i class="fa-solid fa-clock"></i>
+                <span>4 min read</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="bg-white rounded-2xl shadow-luxury overflow-hidden card-hover group">
+        <div class="relative overflow-hidden">
+          <img class="w-full h-56 object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/3dca930925-b012bc56ecb9a5770a09.png" alt="API architecture diagram with modern cloud infrastructure">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute top-4 left-4">
+            <span class="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-semibold">Backend</span>
+          </div>
+        </div>
+        <div class="p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-4 group-hover:text-purple-600 transition-colors">API Design Principles</h3>
+          <p class="text-slate-600 mb-6 leading-relaxed">
+            Essential principles for designing robust and developer-friendly APIs that stand the test of time and scale effectively.
+          </p>
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div class="flex items-center space-x-3">
+              <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-9.jpg" alt="Author" class="w-8 h-8 rounded-full">
+              <div>
+                <span class="text-sm font-semibold text-slate-900">David Park</span>
+                <p class="text-xs text-slate-500">March 5, 2025</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4 text-sm text-slate-500">
+              <span class="flex items-center space-x-1">
+                <i class="fa-solid fa-clock"></i>
+                <span>8 min read</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="bg-white rounded-2xl shadow-luxury overflow-hidden card-hover group">
+        <div class="relative overflow-hidden">
+          <img class="w-full h-56 object-cover" src="https://storage.googleapis.com/uxpilot-auth.appspot.com/8a4f858090-e96b1642d028bdd7f21b.png" alt="website performance optimization dashboard with speed metrics">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div class="absolute top-4 left-4">
+            <span class="bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-semibold">Performance</span>
+          </div>
+        </div>
+        <div class="p-8">
+          <h3 class="text-2xl font-bold text-slate-900 mb-4 group-hover:text-purple-600 transition-colors">Performance Optimization Tips</h3>
+          <p class="text-slate-600 mb-6 leading-relaxed">
+            Practical techniques to improve website performance, reduce loading times, and enhance overall user experience.
+          </p>
+          <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div class="flex items-center space-x-3">
+              <img src="https://storage.googleapis.com/uxpilot-auth.appspot.com/avatars/avatar-6.jpg" alt="Author" class="w-8 h-8 rounded-full">
+              <div>
+                <span class="text-sm font-semibold text-slate-900">Lisa Zhang</span>
+                <p class="text-xs text-slate-500">March 3, 2025</p>
+              </div>
+            </div>
+            <div class="flex items-center space-x-4 text-sm text-slate-500">
+              <span class="flex items-center space-x-1">
+                <i class="fa-solid fa-clock"></i>
+                <span>6 min read</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div id="pagination" class="flex items-center justify-center space-x-3">
+      <button class="px-4 py-3 text-slate-400 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 disabled:opacity-50 shadow-sm" disabled="">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      
+      <button class="px-5 py-3 text-white gradient-bg border-0 rounded-xl shadow-lg font-semibold">
+        1
+      </button>
+      
+      <button class="px-5 py-3 text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-purple-200 transition-all shadow-sm font-medium">
+        2
+      </button>
+      
+      <button class="px-5 py-3 text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-purple-200 transition-all shadow-sm font-medium">
+        3
+      </button>
+      
+      <span class="px-3 text-slate-400 font-medium">...</span>
+      
+      <button class="px-5 py-3 text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-purple-200 transition-all shadow-sm font-medium">
+        8
+      </button>
+      
+      <button class="px-4 py-3 text-slate-700 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 hover:border-purple-200 transition-all shadow-sm">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+    </div>
+  </div>
+</main>
+
+<footer id="footer" class="bg-white border-t border-slate-200 py-12">
+  <div class="max-w-7xl mx-auto px-6">
+    <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center space-x-4">
+        <div class="w-12 h-12 gradient-bg rounded-xl flex items-center justify-center text-white shadow-lg">
+          <span class="text-xl font-bold">B</span>
+        </div>
+        <span class="text-2xl font-bold text-gradient">BlogSpace</span>
+      </div>
+      <div class="flex items-center space-x-8 text-sm font-medium text-slate-600">
+        <span class="hover:text-slate-900 cursor-pointer transition-colors">About</span>
+        <span class="hover:text-slate-900 cursor-pointer transition-colors">Contact</span>
+        <span class="hover:text-slate-900 cursor-pointer transition-colors">Privacy</span>
+        <span class="hover:text-slate-900 cursor-pointer transition-colors">Terms</span>
+      </div>
+    </div>
+    <div class="pt-8 border-t border-slate-200 text-center text-sm text-slate-500">
+      <p>© 2025 BlogSpace. All rights reserved. Made with ❤️ for content creators worldwide.</p>
+    </div>
+  </div>
+</footer>
+
+
+</body></html>
+
